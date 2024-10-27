@@ -19,8 +19,11 @@ typedef struct ControlApplicationMemoryModeOverrideConfig {
 
 static ControlApplicationMemoryModeOverrideConfig g_memoryOverrideConfig = { 0 };
 
+static const char defaultPatchPath[] = "/luma/titles/0000000000000000/";
+
 extern u32 config, multiConfig, bootConfig;
 extern bool isN3DS, isSdMode, nextGamePatchDisabled;
+extern char gamePatchPath[];
 
 static u64 g_cached_programHandle; // for exheader info only
 static ExHeader_Info g_exheaderInfo;
