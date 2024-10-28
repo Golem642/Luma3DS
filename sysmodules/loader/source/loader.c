@@ -20,12 +20,11 @@ typedef struct ControlApplicationMemoryModeOverrideConfig {
 
 static ControlApplicationMemoryModeOverrideConfig g_memoryOverrideConfig = { 0 };
 
-static bool isCustomPatchPathEnabled = false;
+extern u32 config, multiConfig, bootConfig;
+extern bool isN3DS, isSdMode, isCustomGamePatchPathEnabled, nextGamePatchDisabled;
+
 static const char defaultPatchPath[] = "/luma/titles/0000000000000000/";
 static char gamePatchPath[512]; // I actually don't know what's the char limit for a file path here
-
-extern u32 config, multiConfig, bootConfig;
-extern bool isN3DS, isSdMode, nextGamePatchDisabled;
 
 static u64 g_cached_programHandle; // for exheader info only
 static ExHeader_Info g_exheaderInfo;
@@ -150,10 +149,6 @@ static char* GetGamePatchPath(u64 progId) {
         progIdToStr(path + 28, progId);
     }
     return path;
-}
-
-static void ResetGamePatchPath() {
-    isCustomGamePatchPathEnabled = false;
 }
 
 static void InvalidateCachedCxiFile(void)
