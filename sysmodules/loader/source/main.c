@@ -10,7 +10,7 @@
 #include "hbldr.h"
 
 u32 config, multiConfig, bootConfig;
-bool isN3DS, isSdMode, nextGamePatchDisabled;
+bool isN3DS, isSdMode, isCustomGamePatchPathEnabled, nextGamePatchDisabled;
 
 // MAKE SURE fsreg has been init before calling this
 static Result fsldrPatchPermissions(void)
@@ -133,6 +133,7 @@ static_assert(ARGVBUF_SIZE > 2 * PATH_MAX, "Wrong 3DSX argv buffer size");
 
 int main(void)
 {
+    isCustomGamePatchPathEnabled = false;
     nextGamePatchDisabled = false;
 
     // Loader doesn't use any input static buffer, so we should be fine
