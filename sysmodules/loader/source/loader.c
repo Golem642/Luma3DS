@@ -5,6 +5,7 @@
 #include "ifile.h"
 #include "util.h"
 #include "hbldr.h"
+#include "strings.h"
 
 #define SYSMODULE_CXI_COOKIE_MASK 0xEEEE000000000000ull
 
@@ -19,11 +20,12 @@ typedef struct ControlApplicationMemoryModeOverrideConfig {
 
 static ControlApplicationMemoryModeOverrideConfig g_memoryOverrideConfig = { 0 };
 
+static bool isCustomPatchPathEnabled = false;
 static const char defaultPatchPath[] = "/luma/titles/0000000000000000/";
+static char gamePatchPath[512]; // I actually don't know what's the char limit for a file path here
 
 extern u32 config, multiConfig, bootConfig;
 extern bool isN3DS, isSdMode, nextGamePatchDisabled;
-extern char gamePatchPath[];
 
 static u64 g_cached_programHandle; // for exheader info only
 static ExHeader_Info g_exheaderInfo;
@@ -135,6 +137,23 @@ static inline bool IsApplicationId(u64 tid)
 static inline bool IsSysmoduleCxiCookie(u64 programHandle)
 {
     return (programHandle >> 32) == (SYSMODULE_CXI_COOKIE_MASK >> 32);
+}
+
+static char* GetGamePatchPath(u64 progId) {
+    char* path;
+    if (isCustomGamePatchPathEnabled)
+        path = (char*)malloc(strlen(gamePatchPath));
+        strcpy(path, gamePatchPath);
+    } else {
+        path = (char*)malloc(strlen(defaultPatchPath));
+        strcpy(path, defaultPatchPath);
+        progIdToStr(path + 28, progId);
+    }
+    return path;
+}
+
+static void ResetGamePatchPath() {
+    isCustomGamePatchPathEnabled = false;
 }
 
 static void InvalidateCachedCxiFile(void)
@@ -609,6 +628,10 @@ void loaderHandleCommands(void *ctx)
             cmdbuf[1] = (Result)0;
             cmdbuf[2] = IPC_Desc_StaticBuffer(sizeof(ExHeader_Info), 0);
             cmdbuf[3] = (u32)&g_lastAppExheaderInfo;
+            break;
+        case 0x103: //SetCustomGamePatchPath
+            cmdbuf[0] = IPS_MakeHeader(0x103, , );
+            // Need to get the string somehow
             break;
         default: // error
             cmdbuf[0] = IPC_MakeHeader(0, 1, 0);
