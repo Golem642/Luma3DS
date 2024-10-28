@@ -630,8 +630,10 @@ void loaderHandleCommands(void *ctx)
             cmdbuf[3] = (u32)&g_lastAppExheaderInfo;
             break;
         case 0x103: //SetCustomGamePatchPath
-            cmdbuf[0] = IPS_MakeHeader(0x103, , );
             // Need to get the string somehow
+            isCustomPatchPathEnabled = true;
+            cmdbuf[0] = IPC_MakeHeader(0x103, 1, 0);
+            cmdbuf[1] = (Result)0;
             break;
         default: // error
             cmdbuf[0] = IPC_MakeHeader(0, 1, 0);
